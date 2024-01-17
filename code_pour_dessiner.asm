@@ -221,7 +221,7 @@ ja FinCalcul
 
 mov eax,dword[i]
 cmp eax, dword[max_iter]
-jbe BoucleCalcul
+jb BoucleCalcul
 mov rdi,qword[display_name]
 mov rsi,qword[window]
 mov rdx,qword[gc]
@@ -241,12 +241,12 @@ FinCalcul:
 inc dword[y]
 mov eax, dword[image_y]
 cmp eax,dword[y]
-jae BoucleY
+ja BoucleY
 
 inc dword[x]
 mov eax, dword[image_x]
 cmp eax,dword[x]
-jae BoucleX
+ja BoucleX
 
 
 jmp flush
