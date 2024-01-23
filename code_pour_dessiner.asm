@@ -51,9 +51,11 @@ i: resd 1
 x: resd 1
 y: resd 1
 tmp: resd 1
+color: resd 1
 
 section .data
 
+zss: dd 255.0
 zero: dd 0.0
 two: dd 2.0
 four: dd 4.0
@@ -216,12 +218,40 @@ movss xmm2, dword[z_i]
 mulss xmm2, xmm2
 addss xmm1,xmm2
 ucomiss xmm1,dword[four]
-ja FinCalcul
+ja DessinCouleur
 
 
 mov eax,dword[i]
 cmp eax, dword[max_iter]
 jb BoucleCalcul
+
+
+mov rdi,qword[display_name]
+mov rsi,qword[gc]
+mov edx,0x000000	; Couleur du crayon ; noir
+call XSetForeground
+jmp FinCalcul
+
+
+DessinCouleur:
+
+mov dword[color],0
+cvtsi2ss xmm0, dword[i]
+mulss xmm0, dword[zss]
+cvtsi2ss xmm1, dword[max_iter]
+divss xmm0, xmm1
+cvtss2si eax, xmm0
+mov byte[color], al
+
+
+mov rdi,qword[display_name]
+mov rsi,qword[gc]
+mov edx, dword[color]	; Couleur du crayon ; noir
+call XSetForeground
+jmp FinCalcul
+
+FinCalcul:
+
 mov rdi,qword[display_name]
 mov rsi,qword[window]
 mov rdx,qword[gc]
@@ -230,12 +260,6 @@ mov r8d,dword[y]	; coordonnée source en y
 mov r9d,dword[x]	; coordonnée destination en x
 push qword[y]		; coordonnée destination en y
 call XDrawLine
-
-
-
-FinCalcul:
-
-
 
 
 inc dword[y]
